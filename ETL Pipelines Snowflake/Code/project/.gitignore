@@ -1,0 +1,26 @@
+notepad .gitignore
+```
+
+**Contents:**
+```
+# dbt artifacts
+target/
+dbt_packages/
+logs/
+dbt_modules/
+
+# Credentials
+profiles.yml
+.env
+
+# Python
+*.pyc
+__pycache__/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/

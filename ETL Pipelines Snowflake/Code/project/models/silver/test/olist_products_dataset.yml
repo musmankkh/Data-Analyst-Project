@@ -1,0 +1,85 @@
+version: 2
+
+models:
+  - name: olist_products_dataset
+    description: "Staging model for product data with data quality improvements"
+    
+    columns:
+      # Primary Key Tests
+      - name: product_id
+        description: "Unique identifier for each product"
+        tests:
+          - unique
+          - not_null
+      
+      # Category Tests
+      - name: product_category_name
+        description: "Product category name in English (or 'uncategorized')"
+        tests:
+          - not_null
+      
+      # Descriptive Attribute Tests
+      - name: product_name_length
+        description: "Length of product name"
+        tests:
+          - not_null
+          
+      
+      - name: product_description_length
+        description: "Length of product description"
+        tests:
+          - not_null
+        
+      - name: product_photos_qty
+        description: "Number of product photos"
+        tests:
+          - not_null
+         
+      
+      # Physical Dimension Tests
+      - name: product_weight_g
+        description: "Product weight in grams (capped between 10g and 50,000g)"
+        tests:
+          - not_null
+        
+      - name: product_length_cm
+        description: "Product length in centimeters (capped between 1cm and 200cm)"
+        tests:
+          - not_null
+      
+      
+      - name: product_height_cm
+        description: "Product height in centimeters (capped between 1cm and 200cm)"
+        tests:
+          - not_null
+      
+      
+      - name: product_width_cm
+        description: "Product width in centimeters (capped between 1cm and 200cm)"
+        tests:
+          - not_null
+      
+      
+      
+      # Quality Flag Tests
+      - name: is_uncategorized
+        description: "Flag indicating if product has no category"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+      
+      - name: has_outlier_dimensions
+        description: "Flag indicating if product had outlier dimensions that were capped"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+      
+      # Metadata Tests
+      - name: dbt_loaded_at
+        description: "Timestamp when record was loaded"
+        tests:
+          - not_null
+
+    

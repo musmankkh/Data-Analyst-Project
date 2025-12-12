@@ -1,0 +1,43 @@
+version: 2
+
+models:
+  - name: olist_order_payments_dataset
+    description: "Cleaned payments table (deduped, normalized payment_type, casted, filtered)."
+    columns:
+      - name: order_id
+        description: "Order identifier (should not be null)."
+        tests:
+          - not_null
+
+      - name: payment_sequential
+        description: "Sequence of payments for the order (should not be null)."
+        tests:
+          - not_null
+
+      - name: payment_type
+        description: "Normalized payment type. Allowed values are normalized forms."
+        tests:
+          - accepted_values:
+              values: ['credit_card', 'boleto', 'voucher', 'debit_card', 'not_defined', 'unknown']
+              quote: true
+              severity: warn
+
+      - name: payment_installments
+        description: "Number of installments for the payment (should be integer >= 1)."
+        tests:
+          - not_null
+
+      - name: payment_value
+        description: "Payment amount, rounded to 2 decimals (should be >= 0)."
+        tests:
+          - not_null
+
+    tests:
+      # Unique combination constraint (already passing in your run)
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - order_id
+            - payment_sequential
+          severity: error
+
+     
