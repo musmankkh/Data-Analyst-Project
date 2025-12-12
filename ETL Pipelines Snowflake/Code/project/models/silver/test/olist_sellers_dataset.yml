@@ -1,0 +1,195 @@
+version: 2
+
+models:
+  - name: olist_sellers_dataset
+    description: "Cleaned seller data from Olist Brazilian e-commerce platform"
+    
+    tests:
+      # ✅ DUPLICATE DETECTION - Table Level
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - seller_id
+            - seller_zip_code_prefix
+          config:
+            severity: warn
+            error_if: ">10"
+            warn_if: ">0"
+
+      # ✅ CONSISTENCY CHECK - All location fields present together
+      - dbt_utils.expression_is_true:
+          expression: "seller_city IS NOT NULL AND seller_state IS NOT NULL AND seller_zip_code_prefix IS NOT NULL"
+          config:
+            severity: error
+
+      # ✅ OUTLIER DETECTION - Invalid ZIP code ranges (Brazilian ZIPs: 01000-99999)
+      - dbt_utils.expression_is_true:
+          expression: "CAST(seller_zip_code_prefix AS INTEGER) BETWEEN 1000 AND 99999"
+          config:
+            severity: warn
+            error_if: ">50"
+
+    columns:
+      # ========================================
+      # SELLER_ID COLUMN
+      # ========================================
+      - name: seller_id
+        description: "Unique seller identifier (UUID format expected)"
+        tests:
+          # ✅ MISSING VALUES - Must not be null
+          - not_null:
+              config:
+                severity: error
+          
+          # ✅ DUPLICATE DETECTION - Must be unique
+          - unique:
+              config:
+                severity: error
+          
+          # ✅ INCONSISTENT RECORDS - Must not be empty string
+          - dbt_utils.not_empty_string:
+              config:
+                severity: error
+          
+          # ✅ DATA TYPE VALIDATION - Check UUID format (32 hex chars)
+          - dbt_expectations.expect_column_value_lengths_to_equal:
+              value: 32
+              config:
+                severity: warn
+                error_if: ">100"
+          
+          # ✅ INCONSISTENT RECORDS - Check for whitespace issues
+          - dbt_expectations.expect_column_values_to_not_match_regex:
+              regex: '^\s|\s$'
+              config:
+                severity: warn
+      
+      # ========================================
+      # SELLER_ZIP_CODE_PREFIX COLUMN
+      # ========================================
+      - name: seller_zip_code_prefix
+        description: "Seller ZIP code prefix (5-digit Brazilian postal code)"
+        tests:
+          # ✅ MISSING VALUES - Must not be null
+          - not_null:
+              config:
+                severity: error
+          
+          # ✅ DUPLICATE DETECTION - Should be unique (one seller per location)
+          - unique:
+              config:
+                severity: warn
+                warn_if: ">0"
+          
+          # ✅ DATA TYPE VALIDATION - Must be string of exactly 5 characters
+          - dbt_expectations.expect_column_value_lengths_to_equal:
+              value: 5
+              config:
+                severity: error
+          
+          # ✅ INCONSISTENT RECORDS - Must be numeric only (no letters)
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '^[0-9]{5}$'
+              config:
+                severity: error
+          
+          # ✅ OUTLIER DETECTION - Statistical range check
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: '01000'
+              max_value: '99999'
+              config:
+                severity: warn
+                warn_if: ">10"
+          
+          # ✅ INCONSISTENT RECORDS - Check for leading zeros preservation
+          - dbt_expectations.expect_column_values_to_not_match_regex:
+              regex: '^[1-9]$'  # Single digit means zero was lost
+              config:
+                severity: error
+      
+      # ========================================
+      # SELLER_CITY COLUMN
+      # ========================================
+      - name: seller_city
+        description: "Seller city name (normalized to lowercase, ASCII)"
+        tests:
+          # ✅ MISSING VALUES - Must not be null
+          - not_null:
+              config:
+                severity: error
+          
+          # ✅ INCONSISTENT RECORDS - Must not be empty
+          - dbt_utils.not_empty_string:
+              config:
+                severity: error
+          
+          # ✅ INCONSISTENT RECORDS - Check for unexpected characters
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '^[a-z0-9 \-]+$'  # lowercase letters, numbers, spaces, hyphens
+              config:
+                severity: warn
+                warn_if: ">50"
+          
+          # ✅ INCONSISTENT RECORDS - No leading/trailing whitespace
+          - dbt_expectations.expect_column_values_to_not_match_regex:
+              regex: '^\s|\s$'
+              config:
+                severity: error
+          
+          # ✅ INCONSISTENT RECORDS - No multiple consecutive spaces
+          - dbt_expectations.expect_column_values_to_not_match_regex:
+              regex: '\s{2,}'
+              config:
+                severity: warn
+          
+          # ✅ DATA TYPE VALIDATION - Reasonable length check
+          - dbt_expectations.expect_column_value_lengths_to_be_between:
+              min_value: 2
+              max_value: 50
+              config:
+                severity: warn
+          
+          # ✅ OUTLIER DETECTION - Check for suspiciously short city names
+          - dbt_expectations.expect_column_value_lengths_to_be_between:
+              min_value: 3
+              max_value: 100
+              config:
+                severity: warn
+                warn_if: ">100"
+      
+      # ========================================
+      # SELLER_STATE COLUMN
+      # ========================================
+      - name: seller_state
+        description: "Brazilian state abbreviation (2-letter uppercase code)"
+        tests:
+          # ✅ MISSING VALUES - Must not be null
+          - not_null:
+              config:
+                severity: error
+          
+          # ✅ INCONSISTENT RECORDS - Must not be empty
+          - dbt_utils.not_empty_string:
+              config:
+                severity: error
+          
+          # ✅ DATA TYPE VALIDATION - Must be exactly 2 characters
+          - dbt_expectations.expect_column_value_lengths_to_equal:
+              value: 2
+              config:
+                severity: error
+          
+          # ✅ INCONSISTENT RECORDS - Must be uppercase letters only
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '^[A-Z]{2}$'
+              config:
+                severity: error
+          
+          # ✅ INCONSISTENT RECORDS - Must be valid Brazilian state code
+          - accepted_values:
+              values: ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 
+                       'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 
+                       'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO']
+              config:
+                severity: error
+          
+      

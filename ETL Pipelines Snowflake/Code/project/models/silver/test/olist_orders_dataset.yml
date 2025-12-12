@@ -1,0 +1,57 @@
+version: 2
+models:
+  - name: olist_orders_dataset
+    description: "Cleaned and validated orders dataset from bronze layer"
+    
+    columns:
+      # ==========================================
+      # PRIMARY KEY TESTS
+      # ==========================================
+      - name: order_id
+        description: "Unique identifier for each order"
+        tests:
+          - unique
+          - not_null
+      
+      # ==========================================
+      # FOREIGN KEY & NOT NULL TESTS
+      # ==========================================
+      - name: customer_id
+        description: "Identifier linking to customer table"
+        tests:
+          - not_null
+      
+    
+      
+      # ==========================================
+      # TIMESTAMP TESTS - NOT NULL
+      # ==========================================
+      - name: order_purchase_timestamp
+        description: "Timestamp when order was purchased"
+        tests:
+          - not_null
+      
+      - name: order_approved_at
+        description: "Timestamp when order was approved (may be NULL for canceled orders)"
+        # No not_null test because 160 missing values are expected
+      
+      - name: order_delivered_carrier_date
+        description: "Timestamp when order was delivered to carrier"
+        # No not_null test because 1,783 missing values are expected
+      
+      - name: order_delivered_customer_date
+        description: "Timestamp when order was delivered to customer"
+        # No not_null test because 2,965 missing values are expected
+      
+      - name: order_estimated_delivery_date
+        description: "Estimated delivery date provided at purchase"
+        tests:
+          - not_null
+      
+      # ==========================================
+      # METADATA FIELD TESTS
+      # ==========================================
+      - name: dbt_loaded_at
+        description: "Timestamp when record was loaded"
+        tests:
+          - not_null

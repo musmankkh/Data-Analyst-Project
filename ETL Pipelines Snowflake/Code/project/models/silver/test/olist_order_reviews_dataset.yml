@@ -1,0 +1,34 @@
+version: 2
+
+models:
+  - name: olist_order_reviews_dataset
+    description: "Cleaned and validated order reviews data"
+    
+    columns:
+      - name: review_id
+        description: "Unique identifier for each review"
+        tests:
+          - not_null
+          - unique
+      
+      - name: order_id
+        description: "Order identifier"
+        tests:
+          - not_null
+      
+      
+      - name: review_score
+        description: "Customer rating (1-5)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [1, 2, 3, 4, 5]
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 5
+              inclusive: true
+      
+      - name: review_creation_date
+        description: "Review creation timestamp"
+        tests:
+          - not_null

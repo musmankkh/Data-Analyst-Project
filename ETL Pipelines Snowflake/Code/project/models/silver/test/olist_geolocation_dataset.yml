@@ -1,0 +1,257 @@
+version: 2
+
+models:
+  - name: olist_geolocation_dataset
+    description: "Cleaned and normalized geolocation data for Brazilian zip codes with outlier removal and deduplication"
+    
+    # Table-level tests
+    tests:
+      # Ensure no duplicate coordinates exist after cleaning
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - geolocation_lat
+            - geolocation_lng
+          config:
+            severity: warn
+            error_if: ">100"  # Allow some duplicates but flag if excessive
+      
+      # Check for reasonable number of records (Brazil has ~95,000 zip codes)
+      # Note: Removed aggregate expression test as it's incompatible with Snowflake
+      # Alternative: Use a custom singular test or row count analysis
+      - dbt_utils.recency:
+          datepart: day
+          field: dbt_loaded_at
+          interval: 30
+          config:
+            severity: warn
+    
+    columns:
+      - name: geolocation_zip_code_prefix
+        description: "5-digit Brazilian ZIP code prefix (zero-padded string format)"
+        tests:
+          # Primary key test - must be unique after deduplication
+          - unique:
+              config:
+                severity: error
+          
+          - not_null:
+              config:
+                severity: error
+          
+          # Ensure it's stored as string (not integer)
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              config:
+                severity: error
+              arguments:
+                column_type: varchar
+          
+          # Ensure exactly 5 characters (zero-padded)
+          - dbt_expectations.expect_column_value_lengths_to_equal:
+              config:
+                severity: error
+              arguments:
+                value: 5
+          
+          # Ensure only numeric characters (Brazilian ZIP format)
+          - dbt_expectations.expect_column_values_to_match_regex:
+              config:
+                severity: error
+              arguments:
+                regex: "^[0-9]{5}$"
+          
+          # Check for valid Brazilian ZIP code range
+          - dbt_expectations.expect_column_values_to_be_between:
+              config:
+                severity: warn
+              arguments:
+                min_value: "'00000'"
+                max_value: "'99999'"
+                strictly: false
+      
+      - name: geolocation_lat
+        description: "Latitude coordinate (filtered for valid Brazil range: -34 to 5)"
+        tests:
+          - not_null:
+              config:
+                severity: error
+          
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              config:
+                severity: error
+              arguments:
+                column_type: number
+          
+          # Brazil-specific latitude boundaries (strict outlier removal)
+          - dbt_expectations.expect_column_values_to_be_between:
+              config:
+                severity: error
+              arguments:
+                min_value: -34
+                max_value: 5
+                strictly: false
+          
+          # Ensure latitude values vary (not all the same)
+          - dbt_utils.not_constant:
+              config:
+                severity: warn
+          
+          # Additional check: warn if values are suspiciously outside common range
+          - dbt_expectations.expect_column_values_to_be_between:
+              config:
+                severity: warn
+                error_if: ">50"  # Flag if >50 records outside this range
+              arguments:
+                min_value: -33.75  # Southernmost Brazil
+                max_value: 5.27    # Northernmost Brazil
+                strictly: false
+      
+      - name: geolocation_lng
+        description: "Longitude coordinate (filtered for valid Brazil range: -74 to -34)"
+        tests:
+          - not_null:
+              config:
+                severity: error
+          
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              config:
+                severity: error
+              arguments:
+                column_type: number
+          
+          # Brazil-specific longitude boundaries (strict outlier removal)
+          - dbt_expectations.expect_column_values_to_be_between:
+              config:
+                severity: error
+              arguments:
+                min_value: -74
+                max_value: -34
+                strictly: false
+          
+          # Ensure longitude values vary (not all the same)
+          - dbt_utils.not_constant:
+              config:
+                severity: warn
+          
+          # Additional check: warn if values are outside common range
+          - dbt_expectations.expect_column_values_to_be_between:
+              config:
+                severity: warn
+                error_if: ">50"
+              arguments:
+                min_value: -73.99  # Westernmost Brazil
+                max_value: -34.79  # Easternmost Brazil
+                strictly: false
+      
+      - name: geolocation_city
+        description: "Normalized city name (lowercase, trimmed, accent-removed)"
+        tests:
+          - not_null:
+              config:
+                severity: error
+          
+          # Ensure no empty strings after normalization
+          - dbt_utils.not_empty_string:
+              config:
+                severity: error
+          
+          # Ensure city names are lowercase (normalization check)
+          # Only check that there are no uppercase letters
+          - dbt_expectations.expect_column_values_to_not_match_regex:
+              config:
+                severity: warn
+                error_if: ">100"
+              arguments:
+                regex: "[A-Z]"  # Fail if uppercase letters found
+          
+          # Check for reasonable city name length
+          - dbt_expectations.expect_column_value_lengths_to_be_between:
+              config:
+                severity: warn
+              arguments:
+                min_value: 2
+                max_value: 100
+      
+      - name: geolocation_city_original
+        description: "Original city name before normalization (for reference and auditing)"
+        tests:
+          - not_null:
+              config:
+                severity: warn
+          
+          - dbt_utils.not_empty_string:
+              config:
+                severity: warn
+      
+      - name: geolocation_state
+        description: "Brazilian state code (uppercase, 2-letter abbreviation)"
+        tests:
+          - not_null:
+              config:
+                severity: error
+          
+          - dbt_utils.not_empty_string:
+              config:
+                severity: error
+          
+          # Must be exactly 2 characters (Brazilian state codes)
+          - dbt_expectations.expect_column_value_lengths_to_equal:
+              config:
+                severity: error
+              arguments:
+                value: 2
+          
+          # Ensure uppercase (standardization check)
+          - dbt_expectations.expect_column_values_to_match_regex:
+              config:
+                severity: error
+              arguments:
+                regex: "^[A-Z]{2}$"
+          
+          # Valid Brazilian state codes (all 27 states + Federal District)
+          - accepted_values:
+              values: ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 
+                       'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 
+                       'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO']
+              config:
+                severity: error
+      
+      - name: duplicate_count
+        description: "Number of duplicate records merged for this ZIP code"
+        tests:
+          - not_null:
+              config:
+                severity: error
+          
+          # Should be at least 1 (original record)
+          - dbt_expectations.expect_column_values_to_be_between:
+              config:
+                severity: warn
+              arguments:
+                min_value: 1
+                max_value: 10000  # Some ZIPs may have many duplicates
+                strictly: false
+          
+          # Flag ZIP codes with suspiciously high duplicate counts
+          - dbt_expectations.expect_column_values_to_be_between:
+              config:
+                severity: warn
+                warn_if: ">10"  # Warn if >10 records have >100 duplicates
+              arguments:
+                min_value: 1
+                max_value: 100
+                strictly: false
+      
+      - name: dbt_loaded_at
+        description: "Timestamp when record was loaded into the data warehouse"
+        tests:
+          - not_null:
+              config:
+                severity: error
+          
+          # Ensure timestamps are recent (within last 30 days)
+          - dbt_expectations.expect_column_values_to_be_between:
+              config:
+                severity: warn
+              arguments:
+                min_value: "current_date - 30"
+                max_value: "current_date + 1"

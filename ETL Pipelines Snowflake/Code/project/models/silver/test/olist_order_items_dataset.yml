@@ -1,0 +1,141 @@
+version: 2
+
+models:
+  - name: olist_order_items_dataset
+    description: "Cleaned and validated order items with data quality flags"
+    
+    # Table-level tests
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - order_id
+            - order_item_id
+    
+    columns:
+      # Primary Keys
+      - name: order_id
+        description: "Unique identifier for the order"
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: varchar
+          - dbt_expectations.expect_column_value_lengths_to_be_between:
+              min_value: 10
+              max_value: 50
+              
+      - name: order_item_id
+        description: "Sequential number identifying the items in the same order"
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: varchar  # Changed to VARCHAR
+          # Remove the range test since it's VARCHAR, or use a custom test
+      
+      # Foreign Keys
+      - name: product_id
+        description: "Product unique identifier"
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: varchar
+              
+      - name: seller_id
+        description: "Seller unique identifier"
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: varchar
+      
+      # Temporal
+      - name: shipping_limit_date
+        description: "Shipping deadline for seller to deliver item to carrier"
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: timestamp_ntz
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "'2016-01-01'"
+              max_value: "'2030-12-31'"
+              config:
+                severity: warn
+      
+      # Financial Fields
+      - name: price
+        description: "Item price"
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 10000
+              config:
+                severity: warn
+                warn_if: ">100"
+          - dbt_expectations.expect_column_mean_to_be_between:
+              min_value: 50
+              max_value: 200
+              config:
+                severity: warn
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+              
+      - name: freight_value
+        description: "Item freight value"
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 500
+              config:
+                severity: warn
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+      
+      # Data Quality Flags
+      - name: price_flag
+        description: "Flag for suspicious price values"
+        tests:
+          - accepted_values:
+              values: ['SUSPICIOUS_LOW_PRICE', 'OUTLIER_HIGH_PRICE', null]
+              quote: true
+              
+      - name: freight_flag
+        description: "Flag for suspicious freight values"
+        tests:
+          - accepted_values:
+              values: ['ZERO_FREIGHT', 'OUTLIER_HIGH_FREIGHT', null]
+              quote: true
+              
+      - name: freight_ratio_flag
+        description: "Flag for unusual freight-to-price ratios"
+        tests:
+          - accepted_values:
+              values: ['HIGH_FREIGHT_RATIO', 'LOW_FREIGHT_RATIO', null]
+              quote: true
+      
+      - name: freight_percentage
+        description: "Freight as percentage of price"
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 100
+              config:
+                severity: warn
+      
+      - name: has_quality_issue
+        description: "Composite flag indicating any data quality concern"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+      
+      # Metadata
+      - name: dbt_loaded_at
+        description: "Timestamp when record was loaded"
+        tests:
+          - not_null
+          
+      - name: surrogate_key
+        description: "Generated surrogate key for the record"
+        tests:
+          - not_null
+          - unique

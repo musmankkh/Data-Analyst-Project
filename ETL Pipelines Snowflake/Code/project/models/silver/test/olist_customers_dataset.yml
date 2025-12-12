@@ -1,0 +1,129 @@
+version: 2
+
+models:
+  - name: olist_customers_dataset
+    description: "Cleaned and deduplicated customer data (dbt model output)"
+
+    tests:
+      # Primary uniqueness: customer_id should be unique (one row per order/customer row)
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - customer_id
+          config:
+            severity: error
+
+      # Basic required business keys must be present
+      - dbt_utils.expression_is_true:
+          expression: "customer_id IS NOT NULL AND customer_unique_id IS NOT NULL"
+          config:
+            severity: error
+
+    columns:
+      - name: customer_id
+        description: "Unique customer/order identifier (primary key for this table)"
+        tests:
+          - unique:
+              config:
+                severity: error
+          - not_null:
+              config:
+                severity: error
+          - dbt_utils.not_empty_string:
+              config:
+                severity: error
+
+      - name: customer_unique_id
+        description: "Unique identifier for the customer (same customer can have multiple customer_id rows)"
+        tests:
+          - not_null:
+              config:
+                severity: error
+          - dbt_utils.not_empty_string:
+              config:
+                severity: error
+          - dbt_expectations.expect_column_values_to_be_in_type_list:
+              arguments:
+                column_type_list: ['STRING', 'VARCHAR', 'TEXT']
+              config:
+                severity: error
+
+      - name: customer_zip_code_prefix
+        description: "Customer zip code prefix stored as text (digits only). Should be trimmed and contain only digits."
+        tests:
+          - not_null:
+              config:
+                severity: error
+
+          # Ensure zip prefix is stored as one of the text types
+          - dbt_expectations.expect_column_values_to_be_in_type_list:
+              arguments:
+                column_type_list: ['STRING', 'VARCHAR', 'TEXT']
+              config:
+                severity: error
+
+          # Accept digits only (any length >=1)
+          - dbt_expectations.expect_column_values_to_match_regex:
+              arguments:
+                regex: "^[0-9]+$"
+              config:
+                severity: warn
+
+          # No whitespace allowed (ensures trimming/normalization)
+          - dbt_expectations.expect_column_values_to_not_match_regex:
+              arguments:
+                regex: "\\s"
+              config:
+                severity: warn
+
+      - name: customer_city
+        description: >
+          Customer city (normalized: trimmed and uppercased).
+          Allowed characters: letters (including common accented characters) and spaces.
+        tests:
+          - not_null:
+              config:
+                severity: error
+          - dbt_utils.not_empty_string:
+              config:
+                severity: error
+
+          # Uppercase + letters and spaces only. Includes accented Latin letters commonly used in Portuguese.
+          - dbt_expectations.expect_column_values_to_match_regex:
+              arguments:
+                # ^[A-ZÀ-ÖØ-Ý]+( [A-ZÀ-ÖØ-Ý]+)*$ allows words separated by single spaces; no digits/symbols.
+                regex: "^[A-ZÀ-ÖØ-Ý]+( [A-ZÀ-ÖØ-Ý]+)*$"
+              config:
+                severity: warn
+
+          # Defensive: ensure no leading/trailing whitespace
+          - dbt_expectations.expect_column_values_to_not_match_regex:
+              arguments:
+                regex: "^\\s|\\s$"
+              config:
+                severity: warn
+
+      - name: customer_state
+        description: >
+          Customer state abbreviation normalized to 2 uppercase letters (e.g., 'SP').
+          This enforces two-character state codes only.
+        tests:
+          - not_null:
+              config:
+                severity: error
+          - dbt_utils.not_empty_string:
+              config:
+                severity: error
+
+          # Exactly two uppercase letters
+          - dbt_expectations.expect_column_values_to_match_regex:
+              arguments:
+                regex: "^[A-Z]{2}$"
+              config:
+                severity: error
+
+          # Explicit length check (redundant but explicit)
+          - dbt_expectations.expect_column_value_lengths_to_equal:
+              arguments:
+                value: 2
+              config:
+                severity: warn
