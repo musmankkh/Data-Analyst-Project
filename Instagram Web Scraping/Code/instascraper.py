@@ -7,35 +7,11 @@ import os
 
 # Your cookies formatted for requests
 cookies = {
-    "datr": "HRw4aXCY9aFm4EpHxPXC6vrT",
-    "ig_did": "80CC0166-7BF8-4140-A4CB-24732B69ADE6",
-    "mid": "aTgcIAALAAGlChW2Eihpn1iRVOI4",
-    "csrftoken": "qPLC2WUYY-FlCbqx9_rzyr",
-    "ds_user_id": "79641938502",
-    "sessionid": "79641938502%3AK3SZUgihNxWpgp%3A15%3AAYjmb2CH8aWeIoAgox_QKxhQ5GxrVrrmkvWlkgxfHw",
-    "rur": '"ODN\05479641938502\0541796821338:01fede22e3b79bcceb23ab440dec1a1b174832242a94196c129ae1c91d0996df408e6525"',
-    "ig_nrcb": "1",
-    "wd": "197x641"
+    ## add your cookies
 }
 
 headers = {
-    "authority": "www.instagram.com",
-    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
-    "accept-encoding": "gzip, deflate, br",
-    "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
-    "cache-control": "max-age=0",
-    "sec-ch-ua": '"Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"',
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": '"Windows"',
-    "sec-fetch-dest": "document",
-    "sec-fetch-mode": "navigate",
-    "sec-fetch-site": "same-origin",
-    "sec-fetch-user": "?1",
-    "upgrade-insecure-requests": "1",
-    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
-    "x-csrftoken": cookies["csrftoken"],
-    "x-ig-app-id": "936619743392459",
-    "x-requested-with": "XMLHttpRequest"
+    ## add your headers
 }
 
 def get_profile_data(username):
@@ -229,8 +205,8 @@ def process_csv_to_excel(input_csv, output_excel=None, username_column='username
 # Example usage
 if __name__ == "__main__":
     # Configuration
-    INPUT_CSV = r"C:\Users\Usman Asghar\Desktop\Intern\Instagram Web Scraping\Excel\username.csv"  # Your CSV file with usernames
-    OUTPUT_EXCEL = r"C:\Users\Usman Asghar\Desktop\Intern\Instagram Web Scraping\Excel\instagram_data.xlsx"  # Output Excel file
+    INPUT_CSV = r"username directory input"  # Your CSV file with usernames
+    OUTPUT_EXCEL = r"output directory"  # Output Excel file
     USERNAME_COLUMN = "username"  # Column name in CSV containing usernames
     DELAY_SECONDS = 3  # Delay between requests (adjust as needed)
     
