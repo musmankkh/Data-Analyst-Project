@@ -388,7 +388,7 @@ def save_all_profiles(all_profiles_data, filename=r"C:\Users\Usman Asghar\Deskto
 # ======================================================
 
 def main():
-    df = pd.read_excel(r"C:\Users\Usman Asghar\Desktop\Intern\LinkedIn Web Scraping\Excel File\linkedin_profiles.xlsx")
+    df = pd.read_excel(r"your input path")
     cookies_file = "linkedins_cookies.pkl"
 
     options = Options()

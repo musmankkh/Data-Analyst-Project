@@ -17,11 +17,11 @@ def human_sleep():
     time.sleep(t)
 
 # ---------------- CONFIG ----------------
-EMAIL = "usman12kh46@gmail.com"
-PASSWORD = "Usman46@@"
+EMAIL = "your email address linkedin"
+PASSWORD = "your linkedin passwrod"
 SEARCH_QUERY = '"CTO"' 
 
-EXCEL_FILE = "C:\\Users\\Usman Asghar\\Desktop\\Intern\\LinkedIn Web Scraping\\Excel File\\linkedin_profiles.xlsx"
+EXCEL_FILE = "excel file"
 COOKIES_FILE = "C:\\Users\\Usman Asghar\\Desktop\\Intern\\LinkedIn Web Scraping\\linkedins_cookies.pkl"
 
 # ---------------- LOAD EXISTING EXCEL (IF ANY) ----------------
