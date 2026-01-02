@@ -1,0 +1,13 @@
+version: 2
+
+sources:
+  - name: bronze
+    database: project-cbe8701e-25df-447d-9da
+    schema: bronze_layer
+    tables:
+      - name: bronze_movies
+      - name: bronze_ratings
+      - name: bronze_tags
+      - name: bronze_links
+      - name: bronze_genome_tags
+      - name: bronze_genome_scores

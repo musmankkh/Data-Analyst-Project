@@ -1,0 +1,20 @@
+version: 2
+
+models:
+  - name: silver_movies
+    description: "Cleaned movies data from bronze layer"
+
+  - name: silver_ratings
+    description: "Cleaned ratings data from bronze layer"
+
+  - name: silver_tags
+    description: "Cleaned tags data from bronze layer"
+
+  - name: silver_links
+    description: "Movie external links (IMDB, TMDB)"
+
+  - name: silver_genome_tags
+    description: "Genome tag reference data"
+
+  - name: silver_genome_scores
+    description: "Genome relevance scores per movie"
