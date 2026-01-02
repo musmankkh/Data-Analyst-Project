@@ -1,0 +1,217 @@
+{
+  "bucket": "movielens-elt-project",
+  "prefix": "bronze_layer/",
+  "scan_timestamp": "20251220_155425",
+  "total_files": 6,
+  "schemas": {
+    "bronze_layer/bronze_genome_scores.parquet": {
+      "columns": [
+        {
+          "name": "movieId",
+          "type": "int64",
+          "nullable": true
+        },
+        {
+          "name": "tagId",
+          "type": "int64",
+          "nullable": true
+        },
+        {
+          "name": "relevance",
+          "type": "double",
+          "nullable": true
+        },
+        {
+          "name": "_ingestion_timestamp",
+          "type": "timestamp[us]",
+          "nullable": true
+        },
+        {
+          "name": "_source_file",
+          "type": "string",
+          "nullable": true
+        },
+        {
+          "name": "_source_bucket",
+          "type": "string",
+          "nullable": true
+        }
+      ]
+    },
+    "bronze_layer/bronze_genome_tags.parquet": {
+      "columns": [
+        {
+          "name": "tagId",
+          "type": "int64",
+          "nullable": true
+        },
+        {
+          "name": "tag",
+          "type": "string",
+          "nullable": true
+        },
+        {
+          "name": "_ingestion_timestamp",
+          "type": "timestamp[us]",
+          "nullable": true
+        },
+        {
+          "name": "_source_file",
+          "type": "string",
+          "nullable": true
+        },
+        {
+          "name": "_source_bucket",
+          "type": "string",
+          "nullable": true
+        }
+      ]
+    },
+    "bronze_layer/bronze_links.parquet": {
+      "columns": [
+        {
+          "name": "movieId",
+          "type": "int64",
+          "nullable": true
+        },
+        {
+          "name": "imdbId",
+          "type": "int64",
+          "nullable": true
+        },
+        {
+          "name": "tmdbId",
+          "type": "double",
+          "nullable": true
+        },
+        {
+          "name": "_ingestion_timestamp",
+          "type": "timestamp[us]",
+          "nullable": true
+        },
+        {
+          "name": "_source_file",
+          "type": "string",
+          "nullable": true
+        },
+        {
+          "name": "_source_bucket",
+          "type": "string",
+          "nullable": true
+        }
+      ]
+    },
+    "bronze_layer/bronze_movies.parquet": {
+      "columns": [
+        {
+          "name": "movieId",
+          "type": "int64",
+          "nullable": true
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "nullable": true
+        },
+        {
+          "name": "genres",
+          "type": "string",
+          "nullable": true
+        },
+        {
+          "name": "_ingestion_timestamp",
+          "type": "timestamp[us]",
+          "nullable": true
+        },
+        {
+          "name": "_source_file",
+          "type": "string",
+          "nullable": true
+        },
+        {
+          "name": "_source_bucket",
+          "type": "string",
+          "nullable": true
+        }
+      ]
+    },
+    "bronze_layer/bronze_ratings.parquet": {
+      "columns": [
+        {
+          "name": "userId",
+          "type": "int64",
+          "nullable": true
+        },
+        {
+          "name": "movieId",
+          "type": "int64",
+          "nullable": true
+        },
+        {
+          "name": "rating",
+          "type": "double",
+          "nullable": true
+        },
+        {
+          "name": "timestamp",
+          "type": "int64",
+          "nullable": true
+        },
+        {
+          "name": "_ingestion_timestamp",
+          "type": "timestamp[us]",
+          "nullable": true
+        },
+        {
+          "name": "_source_file",
+          "type": "string",
+          "nullable": true
+        },
+        {
+          "name": "_source_bucket",
+          "type": "string",
+          "nullable": true
+        }
+      ]
+    },
+    "bronze_layer/bronze_tags.parquet": {
+      "columns": [
+        {
+          "name": "userId",
+          "type": "int64",
+          "nullable": true
+        },
+        {
+          "name": "movieId",
+          "type": "int64",
+          "nullable": true
+        },
+        {
+          "name": "tag",
+          "type": "string",
+          "nullable": true
+        },
+        {
+          "name": "timestamp",
+          "type": "int64",
+          "nullable": true
+        },
+        {
+          "name": "_ingestion_timestamp",
+          "type": "timestamp[us]",
+          "nullable": true
+        },
+        {
+          "name": "_source_file",
+          "type": "string",
+          "nullable": true
+        },
+        {
+          "name": "_source_bucket",
+          "type": "string",
+          "nullable": true
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,28 @@
+Schema Summary for s3://movielens-elt-project/bronze_layer/
+================================================================================
+
+Total Parquet files: 6
+Scan date: 20251220_155425
+
+Columns found across all files:
+--------------------------------------------------------------------------------
+_ingestion_timestamp           -> timestamp[us]
+_source_bucket                 -> string
+_source_file                   -> string
+genres                         -> string
+imdbId                         -> int64
+movieId                        -> int64
+rating                         -> double
+relevance                      -> double
+tag                            -> string
+tagId                          -> int64
+timestamp                      -> int64
+title                          -> string
+tmdbId                         -> double
+userId                         -> int64
+
+================================================================================
+Schema Consistency Check:
+================================================================================
+
+✅ All files have consistent schemas!

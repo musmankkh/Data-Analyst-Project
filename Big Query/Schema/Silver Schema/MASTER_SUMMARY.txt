@@ -1,0 +1,143 @@
+Schema Analysis Summary
+Source: s3://movielens-elt-project/silver/
+Generated: 20251221_132625
+================================================================================
+
+
+Table: silver_genome_scores
+--------------------------------------------------------------------------------
+Location: s3://movielens-elt-project/silver/silver_genome_scores/
+Columns: 11
+
+Column Details:
+  - movie_id                       int64               
+  - tag_id                         int64               
+  - relevance                      double              
+  - relevance_rounded              double              
+  - relevance_category             string              
+  - is_relevance_out_of_range      bool                
+  - is_duplicate                   bool                
+  - duplicate_rank                 int64               
+  - loaded_at                      timestamp[us]       
+  - dbt_run_id                     string              
+  - dbt_run_started_at             string              
+
+
+Table: silver_genome_tags
+--------------------------------------------------------------------------------
+Location: s3://movielens-elt-project/silver/silver_genome_tags/
+Columns: 13
+
+Column Details:
+  - tag_id                         int64               
+  - tag                            string              
+  - tag_original                   string              
+  - tag_length                     int64               
+  - is_tag_missing                 bool                
+  - is_tag_too_short               bool                
+  - is_tag_too_long                bool                
+  - has_special_chars              bool                
+  - is_duplicate                   bool                
+  - duplicate_rank                 int64               
+  - loaded_at                      timestamp[us]       
+  - dbt_run_id                     string              
+  - dbt_run_started_at             string              
+
+
+Table: silver_links
+--------------------------------------------------------------------------------
+Location: s3://movielens-elt-project/silver/silver_links/
+Columns: 11
+
+Column Details:
+  - movie_id                       int64               
+  - imdb_id_raw                    string              
+  - imdb_id                        string              
+  - tmdb_id                        int64               
+  - is_imdb_missing                bool                
+  - is_tmdb_missing                bool                
+  - is_duplicate                   bool                
+  - duplicate_rank                 int64               
+  - loaded_at                      timestamp[us]       
+  - dbt_run_id                     string              
+  - dbt_run_started_at             string              
+
+
+Table: silver_movies
+--------------------------------------------------------------------------------
+Location: s3://movielens-elt-project/silver/silver_movies/
+Columns: 19
+
+Column Details:
+  - movie_id                       int64               
+  - title                          string              
+  - title_clean                    string              
+  - release_year                   int64               
+  - content_type                   string              
+  - genres                         string              
+  - genres_array                   list<element: string not null>
+  - genre_count                    int64               
+  - is_title_missing               bool                
+  - is_genre_missing               bool                
+  - has_malformed_year             bool                
+  - has_invalid_year               bool                
+  - year_pattern_type              string              
+  - has_invalid_genre              bool                
+  - is_duplicate                   bool                
+  - duplicate_rank                 int64               
+  - loaded_at                      timestamp[us]       
+  - dbt_run_id                     string              
+  - dbt_run_started_at             string              
+
+
+Table: silver_ratings
+--------------------------------------------------------------------------------
+Location: s3://movielens-elt-project/silver/silver_ratings/
+Columns: 15
+
+Column Details:
+  - user_id                        int64               
+  - movie_id                       int64               
+  - rating                         decimal128(38, 9)   
+  - timestamp_unix                 int64               
+  - rating_datetime                timestamp[us]       
+  - rating_date                    date32[day]         
+  - rating_year                    int64               
+  - rating_month                   int64               
+  - rating_day                     int64               
+  - rating_day_of_week             string              
+  - data_quality_status            string              
+  - duplicate_rank                 int64               
+  - loaded_at                      timestamp[us]       
+  - dbt_run_id                     string              
+  - dbt_run_started_at             string              
+
+
+Table: silver_tags
+--------------------------------------------------------------------------------
+Location: s3://movielens-elt-project/silver/silver_tags/
+Columns: 21
+
+Column Details:
+  - user_id                        int64               
+  - movie_id                       int64               
+  - tag                            string              
+  - tag_original                   string              
+  - tag_length                     int64               
+  - tag_word_count                 int64               
+  - tag_type                       string              
+  - tagged_at                      timestamp[us]       
+  - tagged_date                    date32[day]         
+  - tagged_year                    int64               
+  - tagged_month                   int64               
+  - tagged_day_of_week             int64               
+  - is_tag_missing                 bool                
+  - is_tag_too_short               bool                
+  - is_tag_too_long                bool                
+  - has_special_chars              bool                
+  - is_duplicate                   bool                
+  - duplicate_rank                 int64               
+  - loaded_at                      timestamp[us]       
+  - dbt_run_id                     string              
+  - dbt_run_started_at             string              
+

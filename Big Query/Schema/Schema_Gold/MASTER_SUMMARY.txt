@@ -1,0 +1,475 @@
+Schema Analysis Summary
+Source: s3://movielens-elt-project/gold/
+Generated: 20251221_140710
+================================================================================
+
+
+Table: dim_date
+--------------------------------------------------------------------------------
+Location: s3://movielens-elt-project/gold/dim_date/
+Columns: 40
+
+Column Details:
+  - date_key                       int64               
+  - date_day                       date32[day]         
+  - year                           int64               
+  - month                          int64               
+  - quarter                        int64               
+  - week_of_year                   int64               
+  - day_of_month                   int64               
+  - day_of_week_num                int64               
+  - day_of_year                    int64               
+  - year_month                     string              
+  - year_quarter                   string              
+  - month_name                     string              
+  - day_name                       string              
+  - month_name_short               string              
+  - day_name_short                 string              
+  - week_start_date                date32[day]         
+  - month_start_date               date32[day]         
+  - quarter_start_date             date32[day]         
+  - year_start_date                date32[day]         
+  - month_end_date                 date32[day]         
+  - quarter_end_date               date32[day]         
+  - year_end_date                  date32[day]         
+  - days_from_today                int64               
+  - weeks_from_today               int64               
+  - months_from_today              int64               
+  - is_weekend                     bool                
+  - is_weekday                     bool                
+  - is_month_start                 bool                
+  - is_month_end                   bool                
+  - is_quarter_start               bool                
+  - is_quarter_end                 bool                
+  - is_year_start                  bool                
+  - is_year_end                    bool                
+  - is_today                       bool                
+  - is_yesterday                   bool                
+  - period_label                   string              
+  - season                         string              
+  - fiscal_quarter                 int64               
+  - fiscal_year                    int64               
+  - created_at                     timestamp[us]       
+
+
+Table: dim_genres
+--------------------------------------------------------------------------------
+Location: s3://movielens-elt-project/gold/dim_genres/
+Columns: 9
+
+Column Details:
+  - genre_key                      int64               
+  - genre_name                     string              
+  - genre_super_category           string              
+  - genre_mood                     string              
+  - target_audience                string              
+  - typical_content_rating         string              
+  - typical_setting                string              
+  - created_At                     timestamp[us]       
+  - updated_At                     timestamp[us]       
+
+
+Table: dim_movies
+--------------------------------------------------------------------------------
+Location: s3://movielens-elt-project/gold/dim_movies/
+Columns: 26
+
+Column Details:
+  - movie_id                       int64               
+  - title                          string              
+  - title_clean                    string              
+  - release_year                   int64               
+  - release_decade                 double              
+  - release_decade_label           string              
+  - movie_era                      string              
+  - movie_age_years                int64               
+  - movie_age_category             string              
+  - genres                         string              
+  - genres_array                   list<element: string not null>
+  - genre_count                    int64               
+  - primary_genre                  string              
+  - genre_category                 string              
+  - imdb_id                        string              
+  - tmdb_id                        int64               
+  - is_genre_missing               bool                
+  - has_invalid_year               bool                
+  - has_invalid_genre              bool                
+  - is_imdb_missing                bool                
+  - is_tmdb_missing                bool                
+  - data_completeness              string              
+  - effective_date                 timestamp[us]       
+  - expiration_date                timestamp[us]       
+  - is_current                     bool                
+  - created_at                     timestamp[us]       
+
+
+Table: dim_tags
+--------------------------------------------------------------------------------
+Location: s3://movielens-elt-project/gold/dim_tags/
+Columns: 9
+
+Column Details:
+  - tag_key                        int64               
+  - tag_name                       string              
+  - tag_source                     string              
+  - tag_length                     int64               
+  - word_count                     int64               
+  - tag_category                   string              
+  - tag_sentiment                  string              
+  - created_at                     timestamp[us]       
+  - updated_at                     timestamp[us]       
+
+
+Table: dim_users
+--------------------------------------------------------------------------------
+Location: s3://movielens-elt-project/gold/dim_users/
+Columns: 19
+
+Column Details:
+  - user_id                        int64               
+  - first_rating_date              date32[day]         
+  - last_rating_date               date32[day]         
+  - first_rating_year              int64               
+  - last_rating_year               int64               
+  - user_tenure_days               int64               
+  - day_since_last_activity        int64               
+  - lifetime_rating_count          int64               
+  - lifetime_movies_count          int64               
+  - avg_ratings_per_day            double              
+  - user_type                      string              
+  - tenure_category                string              
+  - activity_status                string              
+  - user_cohort                    string              
+  - user_cohort_group              string              
+  - effective_date                 timestamp[us]       
+  - expiration_date                timestamp[us]       
+  - is_current                     bool                
+  - created_at                     timestamp[us]       
+
+
+Table: fact_genome_scores
+--------------------------------------------------------------------------------
+Location: s3://movielens-elt-project/gold/fact_genome_scores/
+Columns: 17
+
+Column Details:
+  - genome_score_key               int64               
+  - movie_id                       int64               
+  - tag_id                         int64               
+  - tag_key                        int64               
+  - tag                            string              
+  - tag_original                   string              
+  - relevance_score                double              
+  - relevance_rounded              double              
+  - relevance_category             string              
+  - relevance_detail_category      string              
+  - relevance_band                 double              
+  - is_highly_relevant             int64               
+  - is_medium_relevant             int64               
+  - is_lowly_relevant              int64               
+  - source_loaded_at               timestamp[us]       
+  - created_at                     timestamp[us]       
+  - source_table                   string              
+
+
+Table: fact_user_tags
+--------------------------------------------------------------------------------
+Location: s3://movielens-elt-project/gold/fact_user_tags/
+Columns: 18
+
+Column Details:
+  - tag_event_key                  int64               
+  - user_id                        int64               
+  - movie_id                       int64               
+  - tag_key                        int64               
+  - date_key                       int64               
+  - tag                            string              
+  - tag_type                       string              
+  - tag_original                   string              
+  - tag_length                     int64               
+  - tag_word_count                 int64               
+  - tagged_year                    int64               
+  - tagged_month                   int64               
+  - tagged_at                      timestamp[us]       
+  - tagged_date                    date32[day]         
+  - tag_complexity                 string              
+  - source_loaded_at               timestamp[us]       
+  - created_at                     timestamp[us]       
+  - source_table                   string              
+
+
+Table: kpi_executive_summary
+--------------------------------------------------------------------------------
+Location: s3://movielens-elt-project/gold/kpi_executive_summary/
+Columns: 36
+
+Column Details:
+  - total_users                    int64               
+  - total_movies                   int64               
+  - total_ratings                  int64               
+  - overall_avg_rating             decimal128(38, 9)   
+  - platform_start_date            date32[day]         
+  - platform_last_date             date32[day]         
+  - platform_lifetime_days         int64               
+  - active_users_30d               int64               
+  - active_users_90d               int64               
+  - ratings_30d                    int64               
+  - ratings_90d                    int64               
+  - avg_rating_30d                 decimal128(38, 9)   
+  - calc_avg_daily_ratings_30d     double              
+  - pct_users_active_30d           double              
+  - avg_daily_ratings_lifetime     double              
+  - avg_ratings_per_user           double              
+  - avg_ratings_per_movie          double              
+  - super_power_users              int64               
+  - power_users                    int64               
+  - heavy_users                    int64               
+  - regular_users                  int64               
+  - casual_users                   int64               
+  - light_users                    int64               
+  - high_quality_movies            int64               
+  - good_quality_movies            int64               
+  - average_quality_movies         int64               
+  - blockbluster_movies            int64               
+  - very_popular_movies            int64               
+  - top_10_genres_by_quality       list<element: struct<genre_name: string, avg_rating: decimal128(38, 9), total_ratings: int64, genre_health_score: double> not null>
+  - top_10_genres_by_volume        list<element: struct<genre_name: string, total_ratings: int64, avg_rating: decimal128(38, 9), genre_health_score: double> not null>
+  - latest_daily_ratings           int64               
+  - latest_daily_avg_rating        decimal128(38, 9)   
+  - avg_daily_ratings_30d          double              
+  - latest_qoq_change_pct          double              
+  - latest_mom_change_pct          double              
+  - kpi_generated_at               timestamp[us]       
+
+
+Table: kpi_genre_combinations
+--------------------------------------------------------------------------------
+Location: s3://movielens-elt-project/gold/kpi_genre_combinations/
+Columns: 26
+
+Column Details:
+  - genre_combination              string              
+  - primary_genre                  string              
+  - secondary_genre                string              
+  - primary_super_category         string              
+  - secondary_super_category       string              
+  - total_movies                   int64               
+  - recent_movies_10yr             int64               
+  - recent_movies_5yr              int64               
+  - total_ratings                  int64               
+  - unique_users                   int64               
+  - avg_rating                     decimal128(38, 9)   
+  - rating_median                  decimal128(38, 9)   
+  - rating_stddev                  double              
+  - positive_ratings               int64               
+  - negative_ratings               int64               
+  - pct_positive                   double              
+  - avg_ratings_per_movie          double              
+  - combination_tier               string              
+  - synergy_level                  string              
+  - market_position                string              
+  - genre_synergy_score            double              
+  - market_share_pct               double              
+  - pct_recent_movies              double              
+  - trend_status                   string              
+  - audience_reception             string              
+  - kpi_generated_at               timestamp[us]       
+
+
+Table: kpi_genre_performance
+--------------------------------------------------------------------------------
+Location: s3://movielens-elt-project/gold/kpi_genre_performance/
+Columns: 32
+
+Column Details:
+  - genre_name                     string              
+  - genre_key                      int64               
+  - genre_super_category           string              
+  - genre_mood                     string              
+  - target_audience                string              
+  - typical_content_rating         string              
+  - total_movies                   int64               
+  - movies_recent_10yr             int64               
+  - movies_recent_5yr              int64               
+  - total_ratings                  int64               
+  - total_unique_users             int64               
+  - avg_rating                     decimal128(38, 9)   
+  - rating_median                  decimal128(38, 9)   
+  - rating_stddev                  double              
+  - pct_positive_ratings           double              
+  - avg_ratings_per_movie          double              
+  - ratings_recent_5yr             int64               
+  - avg_rating_recent_5yr          decimal128(38, 9)   
+  - pct_ratings_recent_5yr         double              
+  - pct_movies_recent_5yr          double              
+  - rank_quality                   int64               
+  - rank_popularity                int64               
+  - rank_content_volume            int64               
+  - rank_audience_reach            int64               
+  - quality_category               string              
+  - popularity_category            string              
+  - quality_trend                  string              
+  - genre_health_score             double              
+  - market_share_pct               double              
+  - health_category                string              
+  - strategic_position             string              
+  - kpi_generated_at               timestamp[us]       
+
+
+Table: kpi_movie_performance
+--------------------------------------------------------------------------------
+Location: s3://movielens-elt-project/gold/kpi_movie_performance/
+Columns: 34
+
+Column Details:
+  - movie_id                       int64               
+  - title                          string              
+  - title_clean                    string              
+  - release_year                   int64               
+  - release_decade                 string              
+  - movie_era                      string              
+  - primary_genre                  string              
+  - genre_category                 string              
+  - genre_count                    int64               
+  - imdb_id                        string              
+  - tmdb_id                        int64               
+  - total_ratings                  int64               
+  - avg_rating                     decimal128(38, 9)   
+  - rating_median                  decimal128(38, 9)   
+  - rating_stddev                  double              
+  - positive_ratings               int64               
+  - negative_ratings               int64               
+  - unique_raters                  int64               
+  - pct_positive_ratings           double              
+  - pct_negative_ratings           double              
+  - total_user_tags                int64               
+  - unique_taggers                 int64               
+  - total_genome_tags              int64               
+  - high_relevance_tags            int64               
+  - movie_performance_tier         string              
+  - popularity_tier                string              
+  - controversy_level              string              
+  - rating_tier                    string              
+  - composite_score                double              
+  - first_rating_date              date32[day]         
+  - last_rating_date               date32[day]         
+  - rating_span_days               int64               
+  - data_completeness              string              
+  - kpi_generated_at               timestamp[us]       
+
+
+Table: kpi_tag_analytics
+--------------------------------------------------------------------------------
+Location: s3://movielens-elt-project/gold/kpi_tag_analytics/
+Columns: 32
+
+Column Details:
+  - tag_name                       string              
+  - tag_key                        int64               
+  - tag_category                   string              
+  - tag_sentiment                  string              
+  - tag_type                       string              
+  - user_tag_uses                  int64               
+  - users_who_tagged               int64               
+  - unique_movies_tagged           int64               
+  - genome_tag_uses                int64               
+  - genome_avg_relevance           double              
+  - genome_movie_count             int64               
+  - high_relevance_count           int64               
+  - avg_rating_tagged_movies       decimal128(38, 9)   
+  - ratings_for_tagged_movies      int64               
+  - total_movie_coverage           int64               
+  - rank_popularity                int64               
+  - rank_movie_coverage            int64               
+  - rank_genome_relevance          int64               
+  - rank_rating_correlation        int64               
+  - relevance_category             string              
+  - activity_status                string              
+  - tag_quality_score              double              
+  - avg_uses_per_user              double              
+  - avg_tags_per_movie             double              
+  - pct_uses_last_year             double              
+  - pct_uses_last_90d              double              
+  - tag_performance_segment        string              
+  - tag_lifecycle_stage            string              
+  - first_used                     date32[day]         
+  - last_used                      date32[day]         
+  - days_since_last_use            int64               
+  - kpi_generated_at               timestamp[us]       
+
+
+Table: kpi_time_series
+--------------------------------------------------------------------------------
+Location: s3://movielens-elt-project/gold/kpi_time_series/
+Columns: 40
+
+Column Details:
+  - rating_date                    date32[day]         
+  - rating_month                   timestamp[us]       
+  - date_key                       int64               
+  - year                           int64               
+  - quarter                        int64               
+  - month                          int64               
+  - month_name                     string              
+  - week_of_year                   int64               
+  - day_of_week_num                int64               
+  - day_name                       string              
+  - year_month                     string              
+  - year_quarter                   string              
+  - is_weekend                     bool                
+  - is_weekday                     bool                
+  - season                         string              
+  - daily_ratings                  int64               
+  - daily_active_users             int64               
+  - daily_unique_movies            int64               
+  - daily_avg_rating               decimal128(38, 9)   
+  - daily_positive_ratings         int64               
+  - daily_negative_ratings         int64               
+  - daily_pct_positive             double              
+  - ma_7day_ratings                double              
+  - ma_30day_ratings               double              
+  - ma_7day_avg_rating             decimal128(38, 9)   
+  - dod_rating_change              int64               
+  - dod_rating_change_pct          double              
+  - wow_rating_change              int64               
+  - wow_rating_change_pct          double              
+  - monthly_total_ratings          int64               
+  - monthly_avg_rating             decimal128(38, 9)   
+  - mom_rating_change              int64               
+  - mom_rating_change_pct          double              
+  - quarterly_total_ratings        int64               
+  - quarterly_avg_rating           decimal128(38, 9)   
+  - qoq_rating_change              int64               
+  - qoq_rating_change_pct          double              
+  - trend_direction                string              
+  - activity_level                 string              
+  - kpi_generated_at               timestamp[us]       
+
+
+Table: kpi_user_engagement
+--------------------------------------------------------------------------------
+Location: s3://movielens-elt-project/gold/kpi_user_engagement/
+Columns: 20
+
+Column Details:
+  - user_id                        int64               
+  - user_type                      string              
+  - tenure_category                string              
+  - user_cohort_group              string              
+  - rating_behavior_profile        string              
+  - taste_diversity                string              
+  - total_ratings                  int64               
+  - unique_movies_rated            int64               
+  - tenure_days                    int64               
+  - avg_rating_given               decimal128(38, 9)   
+  - rating_stddev                  double              
+  - positive_ratings_given         int64               
+  - negative_ratings_given         int64               
+  - neutral_ratings_given          int64               
+  - pct_positive_ratings           double              
+  - user_engagement_score          double              
+  - engagement_percentile          string              
+  - first_rating_date              date32[day]         
+  - last_rating_date               date32[day]         
+  - kpi_generated_at               timestamp[us]       
+

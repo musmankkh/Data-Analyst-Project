@@ -1,0 +1,10 @@
+movielens_dbt:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: oauth
+      project: project-cbe8701e-25df-447d-9da
+      dataset: default
+      location: US
+      threads: 4
